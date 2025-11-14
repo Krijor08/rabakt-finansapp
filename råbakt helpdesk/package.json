@@ -1,0 +1,25 @@
+{
+  "name": "node-docker-app",
+  "version": "1.0.0",
+  "description": "A Node.js + Express + MySQL app running inside Docker",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "nodemon --legacy-watch server.js",
+    "migrate": "node migrate.js",
+    "seed": "node seed.js",
+    "test": "echo \"No tests defined\" && exit 0"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "bcryptjs": "^3.0.2",
+    "body-parser": "^1.20.3",
+    "express": "^4.21.2",
+    "jsonwebtoken": "^9.0.0",
+    "mysql2": "^3.15.3"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.10"
+  }
+}

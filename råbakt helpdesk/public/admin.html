@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Admin Panel | Node Docker App</title>
+  <link rel="stylesheet" href="style.css">
+  <style>
+    body { font-family: Arial, sans-serif; margin: 40px; background: #f9f9f9; }
+    .container { background: #fff; padding: 20px; border-radius: 10px; box-shadow: 0 0 10px rgba(0,0,0,0.1); }
+    table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+    th, td { border: 1px solid #ccc; padding: 8px; text-align: left; }
+    th { background-color: #f4f4f4; }
+    .completed { text-decoration: line-through; color: gray; }
+    button.action { margin: 2px; padding: 5px 10px; border: none; border-radius: 4px; cursor: pointer; }
+    .promote { background-color: #4caf50; color: white; }
+    .demote { background-color: #ff9800; color: white; }
+    .delete { background-color: #f44336; color: white; }
+    #logoutBtn { margin-top: 20px; background: #333; color: white; padding: 10px 15px; border: none; border-radius: 6px; cursor: pointer; }
+  </style>
+</head>
+<body>
+<div class="container">
+  <h1>🛠 Admin Panel</h1>
+  <p id="adminInfo"></p>
+  <table>
+    <thead>
+      <tr>
+        <th>Username</th>
+        <th>Email</th>
+        <th>Role</th>
+        <th>Todos</th>
+        <th>Actions</th>
+      </tr>
+    </thead>
+    <tbody id="usersTable"></tbody>
+  </table>
+  <button id="logoutBtn">Logout</button>
+</div>
+
+<script>
+  const token = localStorage.getItem("token");
+  const usersTable = document.getElementById("usersTable");
+  const adminInfo = document.getElementById("adminInfo");
+  const logoutBtn = document.getElementById("logoutBtn");
+
+  if (!token) window.location.href = "login.html";
+
+  const ROLES = {1: "User", 2: "Moderator", 3: "Manager", 4: "Admin", 5: "Superadmin"};
+
+  async function fetchUsersTodos() {
+    try {
+      const res = await fetch("/admin/users-todos", { headers: { Authorization: `Bearer ${token}` } });
+      if (!res.ok) throw new Error("Not authorized or failed to fetch data.");
+
+      const users = await res.json();
+      const decoded = JSON.parse(atob(token.split('.')[1]));
+      const myRole = Number(decoded.role);
+
+      adminInfo.textContent = `Logged in as: ${decoded.username} (Role: ${ROLES[myRole]} — Level ${myRole})`;
+
+      usersTable.innerHTML = "";
+      users.forEach(user => {
+        const userRoleNum = Number(user.role); // ensure numeric
+        const todosHTML = user.todos.length
+          ? `<ul>${user.todos.map(todo => `<li class="${todo.completed ? 'completed' : ''}">${todo.title}</li>`).join('')}</ul>`
+          : "<em>No todos</em>";
+
+        let actionsHTML = "";
+        if (myRole >= 4 && (myRole > userRoleNum || myRole === 5)) {
+          actionsHTML += `
+            <button class="action promote" onclick="changeRole(${user.id}, ${userRoleNum + 1})" ${userRoleNum >= 5 ? "disabled" : ""}>⬆️ Promote</button>
+            <button class="action demote" onclick="changeRole(${user.id}, ${userRoleNum - 1})" ${userRoleNum <= 1 ? "disabled" : ""}>⬇️ Demote</button>
+            <button class="action delete" onclick="deleteUser(${user.id})">🗑 Delete</button>
+          `;
+        } else {
+          actionsHTML = "<em>Not allowed</em>";
+        }
+
+        usersTable.innerHTML += `
+          <tr>
+            <td>${user.username}</td>
+            <td>${user.email}</td>
+            <td>${ROLES[userRoleNum] || "Unknown"} (Level ${userRoleNum})</td>
+            <td>${todosHTML}</td>
+            <td>${actionsHTML}</td>
+          </tr>
+        `;
+      });
+    } catch (err) {
+      console.error(err);
+      alert("Error fetching admin data. Logging out.");
+      localStorage.removeItem("token");
+      window.location.href = "login.html";
+    }
+  }
+
+  async function changeRole(userId, newRole) {
+    if (newRole < 1 || newRole > 5) { alert("Role must be between 1 and 5."); return; }
+    if (!confirm("Are you sure you want to change this user's role?")) return;
+
+    try {
+      const res = await fetch(`/admin/role/${userId}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
+        body: JSON.stringify({ newRole })
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || "Failed to change role.");
+      alert(data.message);
+      fetchUsersTodos();
+    } catch (err) { alert(err.message); }
+  }
+
+  async function deleteUser(userId) {
+    if (!confirm("Are you sure you want to delete this user?")) return;
+    try {
+      const res = await fetch(`/admin/users/${userId}`, { method: "DELETE", headers: { Authorization: `Bearer ${token}` } });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || "Failed to delete user.");
+      alert(data.message);
+      fetchUsersTodos();
+    } catch (err) { alert(err.message); }
+  }
+
+  logoutBtn.addEventListener("click", () => {
+    localStorage.removeItem("token");
+    window.location.href = "login.html";
+  });
+
+  fetchUsersTodos();
+</script>
+</body>
+</html>
