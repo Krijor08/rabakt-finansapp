@@ -1,0 +1,66 @@
+# ========================================
+# 🐳 Docker
+# ========================================
+# Ignore Docker volumes and local data
+mysql_data/
+*.log
+docker-compose.override.yml
+
+# ========================================
+# 🧠 Node / Express backend
+# ========================================
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+package-lock.json
+
+# Environment and secrets
+.env
+secret.env
+
+# Build outputs
+dist/
+build/
+coverage/
+.cache/
+
+# ========================================
+# 📱 Expo / React Native app
+# ========================================
+# Node modules in the Expo folder
+expo project/node_modules/
+expo project/.expo/
+expo project/.expo-shared/
+expo project/web-build/
+expo project/dist/
+expo project/build/
+
+# Logs
+expo project/npm-debug.log*
+expo project/yarn-debug.log*
+expo project/yarn-error.log*
+expo project/*.log
+
+# Metro bundler cache
+.expo/
+.expo-shared/
+.expo/*
+
+# ========================================
+# 💻 Editor / OS files
+# ========================================
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+*.swp
+*.swo
+
+# ========================================
+# 🔒 Credentials
+# ========================================
+*.pem
+*.key
+*.crt
+*.p12
