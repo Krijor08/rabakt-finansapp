@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Home | Unified App</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="container" style="text-align: center;">
+    <h1>👋 Welcome!</h1>
+    <p>Select which application you want to open:</p>
+
+    <button class="button" onclick="goNodeApp()">Open Node App</button>
+    <button class="button" onclick="goGoApp()">Open Go/TS App</button>
+
+    <button class="button secondary" id="logoutBtn">Logout</button>
+  </div>
+
+<script>
+  const token = localStorage.getItem("token");
+  if (!token) {
+    window.location.href = "login.html";
+  }
+
+  function goNodeApp() {
+    window.location.href = "/råbakt-helpdesk/public/todos.html"; 
+  }
+
+  function goGoApp() {
+    window.location.href = "/finance-app/public/index.html"; 
+  }
+
+  document.getElementById("logoutBtn").onclick = () => {
+    localStorage.removeItem("token");
+    localStorage.removeItem("user");
+    window.location.href = "welcome.html";
+  };
+</script>
+
+</body>
+</html>

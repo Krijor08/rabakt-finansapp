@@ -1,0 +1,52 @@
+version: "3.9"
+
+services:
+  db:
+    image: mysql:8
+    container_name: db
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: mydb
+      MYSQL_USER: iseeanoob
+      MYSQL_PASSWORD: pass
+    ports:
+      - "3306:3306"
+    volumes:
+      - db_data:/var/lib/mysql
+
+  auth-node:
+    build: ./backend-node
+    container_name: auth-node
+    restart: always
+    environment:
+      DB_HOST: db
+      DB_USER: iseeanoob
+      DB_PASSWORD: pass
+      DB_NAME: mydb
+      JWT_SECRET: supersecretkey
+      PORT: 3000
+    ports:
+      - "3000:3000"
+    depends_on:
+      - db
+
+  go-app:
+    build: ./backend-go
+    container_name: go-app
+    restart: always
+    environment:
+      DB_HOST: db
+      DB_USER: iseeanoob
+      DB_PASSWORD: pass
+      DB_NAME: mydb
+      AUTH_URL: http://auth-node:3000/verify-token
+      PORT: 8080
+    ports:
+      - "8080:8080"
+    depends_on:
+      - db
+      - auth-node
+
+volumes:
+  db_data:
