@@ -1,4 +1,4 @@
-version: '3.9'
+version: "3.9"
 
 services:
   db:
@@ -26,8 +26,8 @@ services:
       DB_USER: root
       DB_PASSWORD: pass
       DB_NAME: mydb
-    ports:
-      - "3000:3000"
+    expose:
+      - "3000"
     depends_on:
       - db
 
@@ -42,8 +42,8 @@ services:
       DB_USER: root
       DB_PASSWORD: pass
       DB_NAME: mydb
-    ports:
-      - "3001:3001"
+    expose:
+      - "3001"
     depends_on:
       - db
       - auth
@@ -52,8 +52,21 @@ services:
     build: ./finance-app
     container_name: go_app
     restart: always
+    expose:
+      - "8080"
+
+  gateway:
+    image: nginx:latest
+    container_name: api_gateway
+    restart: always
     ports:
-      - "8080:8080"
+      - "80:80"
+    volumes:
+      - ./gateway/nginx.conf:/etc/nginx/nginx.conf:ro
+    depends_on:
+      - auth
+      - node-app
+      - go-app
 
 volumes:
   db_data:
