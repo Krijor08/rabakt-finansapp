@@ -1,50 +1,97 @@
-import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, Pressable, Alert, View } from 'react-native';
-import './style.css';
+import * as React from 'react';
+import {
+  View,
+  Text,
+  StyleSheet,
+  Pressable,
+  Alert,
+} from 'react-native';
+import {
+  createStaticNavigation,
+  useNavigation,
+} from '@react-navigation/native';
+import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import { Button } from '@react-navigation/elements';
 
-export default function App() {
+function HomeScreen() {
+  const navigation = useNavigation();
+
   return (
     <View style={styles.container}>
-      <Text>Choose your app:</Text>
-      <StatusBar style="auto" />
-
-      <View style={styles.buttonGrid}>
-        <Pressable style={styles.button} onPress={() => Alert.alert('Graph app opened')}>
-        <Text style={styles.buttonText}>Graphs</Text>
-        </Pressable>
-
-        <Pressable style={styles.button} onPress={() => Alert.alert('Todo app opened')}>
-        <Text style={styles.buttonText}>Todo</Text>
-        </Pressable>
-
-        <Pressable style={styles.button} onPress={() => Alert.alert('Payment app opened')}>
-        <Text style={styles.buttonText}>Payment</Text>
-        </Pressable>
-      </View>
+      <Text style={styles.menuText1}>Finance App</Text>
+      <Text style={styles.menuText2}>Choose Option:</Text>
+      <Pressable style={styles.button} onPress={() => navigation.navigate('Login')}>
+        <Text style={styles.buttonText}>
+          Go to Login
+        </Text>
+      </Pressable>
+      <Pressable style={styles.button} onPress={() => navigation.navigate('SignUp')}>
+        <Text style={styles.buttonText}>
+          Go to Sign Up
+        </Text>
+      </Pressable>
     </View>
   );
 }
+
+function LoginScreen() {
+  return (
+    <View style={styles.container}>
+      <Text style={styles.menuText1}>Login</Text>
+    </View>
+  );
+}
+
+function SignUpScreen() {
+  return (
+    <View style={styles.container}>
+      <Text style={styles.menuText1}>Sign Up</Text>
+    </View>
+  );
+}
+
+const RootStack = createNativeStackNavigator({
+  initialRouteName: 'Home',
+  screens: {
+    Home: HomeScreen,
+    SignUp: SignUpScreen,
+    Login: LoginScreen,
+  },
+});
+
+const Navigation = createStaticNavigation(RootStack);
+
+export default function App() {
+  return <Navigation />;
+}
+
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#ffffffff',
-    marginTop: 30,
-    marginBottom: 30,
-    marginLeft: 15,
-    marginRight: 15,
+    padding: 15,
   },
   button: {
     backgroundColor: '#ff7300ff',
-    width: '25%',
+    width: 'auto',
+    height: '10%',
     borderRadius: 5,
+    margin: 10,
   },
   buttonText: {
     color: '#ffffffff',
+    textAlign: 'center',
+    fontSize: 20,
   },
-  buttonGrid: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    justifyContent: 'space-between',
+  menuText1: {
+    color: '#000000ff',
+    textAlign: 'center',
+    fontSize: 25,
+  },
+  menuText2: {
+    color: '#000000ff',
+    textAlign: 'center',
+    fontSize: 20,
   },
 });
