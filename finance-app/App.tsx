@@ -75,6 +75,7 @@ function SignUpScreen() {
   const [firstName, onChangeFirstName] = React.useState('');
   const [lastName, onChangeLastName] = React.useState('');
   const [password, onChangePassword] = React.useState('');
+  const [key, onChangeKey] = React.useState('');
   return (
     <View style={styles.container}>
       <Text style={styles.menuText1}>Sign Up</Text>
@@ -102,6 +103,12 @@ function SignUpScreen() {
         value={password}
         placeholder="Password"
       />
+      <TextInput
+        style={styles.inputField}
+        onChangeText={onChangeKey}
+        value={key}
+        placeholder="Key"
+      />
       <Pressable style={styles.button} onPress={() => navigation.navigate('Login')}>
         <Text style={styles.buttonText}>
           Sign Up
@@ -117,15 +124,15 @@ function HomePageScreen() {
       <Text style={styles.menuText1}>Choose your app:</Text>
 
       <View style={styles.buttonGrid}>
-        <Pressable style={styles.button} onPress={() => Alert.alert('Graph app opened')}>
+        <Pressable style={styles.gridButton} onPress={() => Alert.alert('Graph app opened')}>
         <Text style={styles.buttonText}>Graphs</Text>
         </Pressable>
 
-        <Pressable style={styles.button} onPress={() => Alert.alert('Todo app opened')}>
+        <Pressable style={styles.gridButton} onPress={() => Alert.alert('Todo app opened')}>
         <Text style={styles.buttonText}>Todo</Text>
         </Pressable>
 
-        <Pressable style={styles.button} onPress={() => Alert.alert('Payment app opened')}>
+        <Pressable style={styles.gridButton} onPress={() => Alert.alert('Payment app opened')}>
         <Text style={styles.buttonText}>Payment</Text>
         </Pressable>
       </View>
@@ -152,11 +159,14 @@ export default function App() {
 
 const styles = StyleSheet.create({
   container: {
+    alignItems: 'center',
     flex: 1,
     backgroundColor: '#ffffffff',
     padding: 15,
   },
   button: {
+    minWidth: '20%',
+    maxWidth: '90%',
     backgroundColor: '#ff7300ff',
     width: 'auto',
     height: 'auto',
@@ -180,11 +190,24 @@ const styles = StyleSheet.create({
     fontSize: 20,
   },
   buttonGrid: {
+    width: '100%',
     flexDirection: 'row',
     flexWrap: 'wrap',
     justifyContent: 'space-between',
   },
+    gridButton: {
+    minWidth: 400,
+    minHeight: 300,
+    backgroundColor: '#ff7300ff',
+    width: 'auto',
+    height: 'auto',
+    borderRadius: 5,
+    margin: 10,
+    padding: 12.5,
+  },
   inputField: {
+    minWidth: '20%',
+    maxWidth: '90%',
     color: '#ffffffff',
     fontSize: 17.5,
     backgroundColor: '#ff7300ff',
