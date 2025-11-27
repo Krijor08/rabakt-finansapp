@@ -30,6 +30,11 @@ function HomeScreen() {
           Go to Sign Up
         </Text>
       </Pressable>
+      <Pressable style={styles.button} onPress={() => navigation.navigate('HomePage')}>
+        <Text style={styles.buttonText}>
+          Go to Home Page
+        </Text>
+      </Pressable>
     </View>
   );
 }
@@ -50,12 +55,35 @@ function SignUpScreen() {
   );
 }
 
+function HomePageScreen() {
+    return (
+    <View style={styles.container}>
+      <Text style={styles.menuText1}>Choose your app:</Text>
+
+      <View style={styles.buttonGrid}>
+        <Pressable style={styles.button} onPress={() => Alert.alert('Graph app opened')}>
+        <Text style={styles.buttonText}>Graphs</Text>
+        </Pressable>
+
+        <Pressable style={styles.button} onPress={() => Alert.alert('Todo app opened')}>
+        <Text style={styles.buttonText}>Todo</Text>
+        </Pressable>
+
+        <Pressable style={styles.button} onPress={() => Alert.alert('Payment app opened')}>
+        <Text style={styles.buttonText}>Payment</Text>
+        </Pressable>
+      </View>
+    </View>
+  );
+}
+
 const RootStack = createNativeStackNavigator({
   initialRouteName: 'Home',
   screens: {
     Home: HomeScreen,
-    SignUp: SignUpScreen,
     Login: LoginScreen,
+    SignUp: SignUpScreen,
+    HomePage: HomePageScreen
   },
 });
 
@@ -75,9 +103,10 @@ const styles = StyleSheet.create({
   button: {
     backgroundColor: '#ff7300ff',
     width: 'auto',
-    height: '10%',
+    height: 'auto',
     borderRadius: 5,
     margin: 10,
+    padding: 10,
   },
   buttonText: {
     color: '#ffffffff',
@@ -93,5 +122,10 @@ const styles = StyleSheet.create({
     color: '#000000ff',
     textAlign: 'center',
     fontSize: 20,
+  },
+    buttonGrid: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    justifyContent: 'space-between',
   },
 });
