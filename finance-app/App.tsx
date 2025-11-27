@@ -5,6 +5,7 @@ import {
   StyleSheet,
   Pressable,
   Alert,
+  TextInput,
 } from 'react-native';
 import {
   createStaticNavigation,
@@ -12,7 +13,8 @@ import {
 } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { Button } from '@react-navigation/elements';
-
+import { useState } from 'react';
+import { useNavigate } from "react-router-dom";
 function HomeScreen() {
   const navigation = useNavigation();
 
@@ -40,17 +42,71 @@ function HomeScreen() {
 }
 
 function LoginScreen() {
+  const navigation = useNavigation();
+  const [email, onChangeEmail] = React.useState('');
+  const [password, onChangePassword] = React.useState('');
   return (
     <View style={styles.container}>
-      <Text style={styles.menuText1}>Login</Text>
+      <Text style={styles.menuText1}>Log In</Text>
+      <TextInput
+        style={styles.inputField}
+        onChangeText={onChangeEmail}
+        value={email}
+        placeholder="Email"
+      />
+      <TextInput
+        style={styles.inputField}
+        onChangeText={onChangePassword}
+        value={password}
+        placeholder="Password"
+      />
+      <Pressable style={styles.button} onPress={() => navigation.navigate('HomePage')}>
+        <Text style={styles.buttonText}>
+          Log In
+        </Text>
+      </Pressable>
     </View>
   );
 }
 
 function SignUpScreen() {
+  const navigation = useNavigation();
+  const [email, onChangeEmail] = React.useState('');
+  const [firstName, onChangeFirstName] = React.useState('');
+  const [lastName, onChangeLastName] = React.useState('');
+  const [password, onChangePassword] = React.useState('');
   return (
     <View style={styles.container}>
       <Text style={styles.menuText1}>Sign Up</Text>
+      <TextInput
+        style={styles.inputField}
+        onChangeText={onChangeEmail}
+        value={email}
+        placeholder="Email"
+      />
+      <TextInput
+        style={styles.inputField}
+        onChangeText={onChangeFirstName}
+        value={firstName}
+        placeholder="First Name"
+      />
+      <TextInput
+        style={styles.inputField}
+        onChangeText={onChangeLastName}
+        value={lastName}
+        placeholder="Last Name"
+      />
+      <TextInput
+        style={styles.inputField}
+        onChangeText={onChangePassword}
+        value={password}
+        placeholder="Password"
+      />
+      <Pressable style={styles.button} onPress={() => navigation.navigate('Login')}>
+        <Text style={styles.buttonText}>
+          Sign Up
+        </Text>
+      </Pressable>
     </View>
   );
 }
@@ -106,7 +162,7 @@ const styles = StyleSheet.create({
     height: 'auto',
     borderRadius: 5,
     margin: 10,
-    padding: 10,
+    padding: 12.5,
   },
   buttonText: {
     color: '#ffffffff',
@@ -123,9 +179,17 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     fontSize: 20,
   },
-    buttonGrid: {
+  buttonGrid: {
     flexDirection: 'row',
     flexWrap: 'wrap',
     justifyContent: 'space-between',
+  },
+  inputField: {
+    color: '#ffffffff',
+    fontSize: 17.5,
+    backgroundColor: '#ff7300ff',
+    padding: 15,
+    margin: 10,
+    borderRadius: 5,
   },
 });
