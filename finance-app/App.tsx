@@ -45,6 +45,7 @@ function LoginScreen() {
   const navigation = useNavigation();
   const [email, onChangeEmail] = React.useState('');
   const [password, onChangePassword] = React.useState('');
+   const [errorMessage, setErrorMessage] = React.useState('')
   return (
     <View style={styles.container}>
       <Text style={styles.menuText1}>Finance App</Text>
@@ -61,11 +62,50 @@ function LoginScreen() {
         value={password}
         placeholder="Password"
       />
-      <Pressable style={styles.button} onPress={() => navigation.navigate('HomePage')}>
-        <Text style={styles.buttonText}>
-          Log In -&gt;
-        </Text>
+      <Pressable
+        style={styles.button}
+        onPress={async () => {
+          if (!email || !password) {
+            setErrorMessage("Please fill in all fields.");
+            return;
+          } 
+          else {
+            setErrorMessage("");
+          }
+
+          try {
+            const response = await fetch("http://192.168.20.74:45631/login", {
+              method: "POST",
+              headers: {
+                Accept: "application/json",
+                "Content-Type": "application/json",
+              },
+              body: JSON.stringify({
+                email: email,
+                password: password,
+              }),
+            });
+
+            if (!response.ok) {
+              console.log("Server error:", response.status);
+              setErrorMessage("Server error: " + response.status);
+              return;
+            }
+
+            const data = await response.json();
+            console.log("Server response:", data);
+
+            navigation.navigate("HomePage");
+          } catch (err) {
+            console.error("Network/Fetch error:", err);
+            setErrorMessage("Network/Fetch error.");
+          }
+        }}
+      >
+        <Text style={styles.buttonText}>Log In -&gt;</Text>
       </Pressable>
+
+      <Text>{errorMessage}</Text>
     </View>
   );
 }
