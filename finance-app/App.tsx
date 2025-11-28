@@ -24,17 +24,17 @@ function HomeScreen() {
       <Text style={styles.menuText2}>Choose Option:</Text>
       <Pressable style={styles.button} onPress={() => navigation.navigate('Login')}>
         <Text style={styles.buttonText}>
-          Go to Login
+          Go to Login -&gt;
         </Text>
       </Pressable>
       <Pressable style={styles.button} onPress={() => navigation.navigate('SignUp')}>
         <Text style={styles.buttonText}>
-          Go to Sign Up
+          Go to Sign Up -&gt;
         </Text>
       </Pressable>
       <Pressable style={styles.button} onPress={() => navigation.navigate('HomePage')}>
         <Text style={styles.buttonText}>
-          Go to Home Page
+          Go to Home Page -&gt;
         </Text>
       </Pressable>
     </View>
@@ -47,7 +47,8 @@ function LoginScreen() {
   const [password, onChangePassword] = React.useState('');
   return (
     <View style={styles.container}>
-      <Text style={styles.menuText1}>Log In</Text>
+      <Text style={styles.menuText1}>Finance App</Text>
+      <Text style={styles.menuText2}>Log In</Text>
       <TextInput
         style={styles.inputField}
         onChangeText={onChangeEmail}
@@ -62,7 +63,7 @@ function LoginScreen() {
       />
       <Pressable style={styles.button} onPress={() => navigation.navigate('HomePage')}>
         <Text style={styles.buttonText}>
-          Log In
+          Log In -&gt;
         </Text>
       </Pressable>
     </View>
@@ -76,9 +77,11 @@ function SignUpScreen() {
   const [lastName, onChangeLastName] = React.useState('');
   const [password, onChangePassword] = React.useState('');
   const [key, onChangeKey] = React.useState('');
+  const [errorMessage, setErrorMessage] = React.useState('')
   return (
     <View style={styles.container}>
-      <Text style={styles.menuText1}>Sign Up</Text>
+      <Text style={styles.menuText1}>Finance App</Text>
+      <Text style={styles.menuText2}>Sign Up</Text>
       <TextInput
         style={styles.inputField}
         onChangeText={onChangeEmail}
@@ -109,11 +112,54 @@ function SignUpScreen() {
         value={key}
         placeholder="Key"
       />
-      <Pressable style={styles.button} onPress={() => navigation.navigate('Login')}>
-        <Text style={styles.buttonText}>
-          Sign Up
-        </Text>
+      <Pressable
+        style={styles.button}
+        onPress={async () => {
+          if (!email || !firstName || !lastName || !password || !key) {
+            setErrorMessage("Please fill in all fields.");
+            return;
+          } 
+          else {
+            setErrorMessage("");
+          }
+
+          try {
+            const response = await fetch("http://192.168.20.74:45631/register", {
+              method: "POST",
+              headers: {
+                Accept: "application/json",
+                "Content-Type": "application/json",
+              },
+              body: JSON.stringify({
+                email: email,
+                firstName: firstName,
+                lastName: lastName,
+                password: password,
+                key: key,
+              }),
+            });
+
+            if (!response.ok) {
+              console.log("Server error:", response.status);
+              setErrorMessage("Server error: " + response.status);
+              return;
+            }
+
+            const data = await response.json();
+            console.log("Server response:", data);
+
+            navigation.navigate("Login");
+          } catch (err) {
+            console.error("Network/Fetch error:", err);
+            setErrorMessage("Network/Fetch error.");
+          }
+        }}
+      >
+        <Text style={styles.buttonText}>Sign Up -&gt;</Text>
       </Pressable>
+
+      <Text>{errorMessage}</Text>
+
     </View>
   );
 }
@@ -121,19 +167,20 @@ function SignUpScreen() {
 function HomePageScreen() {
     return (
     <View style={styles.container}>
-      <Text style={styles.menuText1}>Choose your app:</Text>
+      <Text style={styles.menuText1}>Finance App</Text>
+      <Text style={styles.menuText2}>Choose your app:</Text>
 
       <View style={styles.buttonGrid}>
         <Pressable style={styles.gridButton} onPress={() => Alert.alert('Graph app opened')}>
-        <Text style={styles.buttonText}>Graphs</Text>
+          <Text style={styles.buttonText}>Graphs -&gt;</Text>
         </Pressable>
 
         <Pressable style={styles.gridButton} onPress={() => Alert.alert('Todo app opened')}>
-        <Text style={styles.buttonText}>Todo</Text>
+          <Text style={styles.buttonText}>Todo -&gt;</Text>
         </Pressable>
 
         <Pressable style={styles.gridButton} onPress={() => Alert.alert('Payment app opened')}>
-        <Text style={styles.buttonText}>Payment</Text>
+          <Text style={styles.buttonText}>Payment -&gt;</Text>
         </Pressable>
       </View>
     </View>
@@ -165,8 +212,8 @@ const styles = StyleSheet.create({
     padding: 15,
   },
   button: {
-    minWidth: '20%',
-    maxWidth: '90%',
+    minWidth: 300,
+    maxWidth: 600,
     backgroundColor: '#ff7300ff',
     width: 'auto',
     height: 'auto',
@@ -196,18 +243,16 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
   },
     gridButton: {
-    minWidth: 400,
-    minHeight: 300,
+    flex: 1,
+    height: 125,
     backgroundColor: '#ff7300ff',
-    width: 'auto',
-    height: 'auto',
     borderRadius: 5,
     margin: 10,
     padding: 12.5,
   },
   inputField: {
-    minWidth: '20%',
-    maxWidth: '90%',
+    minWidth: 300,
+    maxWidth: 600,
     color: '#ffffffff',
     fontSize: 17.5,
     backgroundColor: '#ff7300ff',
