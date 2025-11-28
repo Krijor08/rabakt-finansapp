@@ -10,13 +10,13 @@ import (
 func main() {
 	mux := http.NewServeMux()
 
-	// Route: /submit
-	submitHandler := http.HandlerFunc(handlers.Submit)
+	registerHandler := http.HandlerFunc(handlers.Register)
+	wrappedRegister := middleware.Logger(registerHandler)
+	mux.Handle("/register", wrappedRegister)
 
-	// Wrap it with middleware
-	wrappedSubmit := middleware.Logger(submitHandler)
-
-	mux.Handle("/submit", wrappedSubmit)
+	loginHandler := http.HandlerFunc(handlers.Login)
+	wrappedLogin := middleware.Logger(loginHandler)
+	mux.Handle("/login", wrappedLogin)
 
 	log.Println("Server running on :45631")
 	log.Fatal(http.ListenAndServe(":45631", mux))

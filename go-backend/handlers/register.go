@@ -6,9 +6,11 @@ import (
 	"net/http"
 )
 
-func Login(w http.ResponseWriter, r *http.Request) {
-	//	not made yet, copy of Register func
+type Payload struct {
+	Name string `json:"name"`
+}
 
+func Register(w http.ResponseWriter, r *http.Request) {
 	if r.Method != http.MethodPost {
 		http.Error(w, "Invalid method", http.StatusMethodNotAllowed)
 		return
