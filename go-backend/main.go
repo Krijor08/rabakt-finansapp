@@ -1,8 +1,8 @@
 package main
 
 import (
-	"local/go/handlers"
-	"local/go/middleware"
+	"go-backend/handlers"
+	"go-backend/middleware"
 	"log"
 	"net/http"
 )
