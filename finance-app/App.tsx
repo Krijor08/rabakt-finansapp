@@ -6,6 +6,7 @@ import {
   Pressable,
   Alert,
   TextInput,
+  Image,
 } from 'react-native';
 import {
   createStaticNavigation,
@@ -20,6 +21,10 @@ function HomeScreen() {
 
   return (
     <View style={styles.container}>
+      <Image
+        style={styles.logoImage}
+        source={require('./assets/favicon.png')}
+      />
       <Text style={styles.menuText1}>Finance App</Text>
       <Text style={styles.menuText2}>Choose Option:</Text>
       <Pressable style={styles.button} onPress={() => navigation.navigate('Login')}>
@@ -48,6 +53,10 @@ function LoginScreen() {
    const [errorMessage, setErrorMessage] = React.useState('')
   return (
     <View style={styles.container}>
+      <Image
+        style={styles.logoImage}
+        source={require('./assets/favicon.png')}
+      />
       <Text style={styles.menuText1}>Finance App</Text>
       <Text style={styles.menuText2}>Log In</Text>
       <TextInput
@@ -120,6 +129,10 @@ function SignUpScreen() {
   const [errorMessage, setErrorMessage] = React.useState('')
   return (
     <View style={styles.container}>
+      <Image
+        style={styles.logoImage}
+        source={require('./assets/favicon.png')}
+      />
       <Text style={styles.menuText1}>Finance App</Text>
       <Text style={styles.menuText2}>Sign Up</Text>
       <TextInput
@@ -207,6 +220,10 @@ function SignUpScreen() {
 function HomePageScreen() {
     return (
     <View style={styles.container}>
+      <Image
+        style={styles.logoImage}
+        source={require('./assets/favicon.png')}
+      />
       <Text style={styles.menuText1}>Finance App</Text>
       <Text style={styles.menuText2}>Choose your app:</Text>
 
@@ -298,6 +315,11 @@ const styles = StyleSheet.create({
     backgroundColor: '#ff7300ff',
     padding: 15,
     margin: 10,
+    borderRadius: 5,
+  },
+  logoImage: {
+    width: 150,
+    height: 150,
     borderRadius: 5,
   },
 });
