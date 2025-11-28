@@ -49,7 +49,7 @@ services:
       - auth
 
   go-app:
-    build: ./finance-app
+    build: ./go-backend
     container_name: go_app
     restart: always
     expose:
