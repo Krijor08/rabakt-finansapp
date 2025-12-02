@@ -54,10 +54,17 @@ function LoginScreen() {
   const [password, onChangePassword] = React.useState('');
   const [errorMessage, setErrorMessage] = React.useState('')
   const [showHidePassword, setshowHidePassword] = useState(true);
+  const [isValid, setIsValid] = React.useState(true);
 
   const togglePassword = () => {
     setshowHidePassword(!showHidePassword);
   };
+
+  function validateEmail(text: string) {
+    const emailRegex =
+      /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
+    return emailRegex.test(text.toLowerCase());
+  }
 
   return (
     <View style={styles.container}>
@@ -71,14 +78,25 @@ function LoginScreen() {
       <Text style={styles.menuText2}>Log In</Text>
 
       <TextInput
-        style={styles.inputField}
-        onChangeText={onChangeEmail}
+        style={[
+          styles.inputField,
+          {
+            borderColor: isValid ? "green" : "red",
+            borderWidth: 2,
+          }
+        ]}
+        onChangeText={(text) => {
+          onChangeEmail(text);
+          setIsValid(validateEmail(text));
+        }}
         value={email}
         keyboardType="email-address"
         autoCapitalize="none"
         autoCorrect={false}
         placeholder="Email"
       />
+      
+      {!isValid && <Text style={{color: "red"}}>Invalid email</Text>}
 
       <TextInput
         style={styles.inputField}
@@ -91,7 +109,7 @@ function LoginScreen() {
       />
 
       <TouchableOpacity onPress={togglePassword} style={styles.smallButton}>
-        <Text style={styles.smallButtonText}>Toogle Password</Text>
+        <Text style={styles.smallButtonText}>Toggle Password</Text>
       </TouchableOpacity>
 
       <Pressable
@@ -153,6 +171,7 @@ function SignUpScreen() {
   const [errorMessage, setErrorMessage] = React.useState('')
   const [showHidePassword, setshowHidePassword] = useState(true);
   const [showHideRPassword, setshowHideRPassword] = useState(true);
+  const [isValid, setIsValid] = React.useState(true);
 
   const togglePassword = () => {
     setshowHidePassword(!showHidePassword);
@@ -160,6 +179,12 @@ function SignUpScreen() {
   const toggleRPassword = () => {
     setshowHideRPassword(!showHideRPassword);
   };
+
+  function validateEmail(text: string) {
+    const emailRegex =
+      /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
+    return emailRegex.test(text.toLowerCase());
+  }
 
   return (
     <View style={styles.container}>
@@ -173,14 +198,25 @@ function SignUpScreen() {
       <Text style={styles.menuText2}>Sign Up</Text>
 
       <TextInput
-        style={styles.inputField}
-        onChangeText={onChangeEmail}
+        style={[
+          styles.inputField,
+          {
+            borderColor: isValid ? "green" : "red",
+            borderWidth: 2,
+          }
+        ]}
+        onChangeText={(text) => {
+          onChangeEmail(text);
+          setIsValid(validateEmail(text));
+        }}
         value={email}
         keyboardType="email-address"
         autoCapitalize="none"
         autoCorrect={false}
         placeholder="Email"
       />
+      
+      {!isValid && <Text style={{color: "red"}}>Invalid email</Text>}
 
       <TextInput
         style={styles.inputField}
@@ -207,7 +243,7 @@ function SignUpScreen() {
       />
 
       <TouchableOpacity onPress={togglePassword} style={styles.smallButton}>
-        <Text style={styles.smallButtonText}>Toogle Password</Text>
+        <Text style={styles.smallButtonText}>Toggle Password</Text>
       </TouchableOpacity>
       
       <TextInput
@@ -221,7 +257,7 @@ function SignUpScreen() {
       />
 
       <TouchableOpacity onPress={toggleRPassword} style={styles.smallButton}>
-        <Text style={styles.smallButtonText}>Toogle Password</Text>
+        <Text style={styles.smallButtonText}>Toggle Password</Text>
       </TouchableOpacity>
 
       <TextInput
@@ -253,8 +289,10 @@ function SignUpScreen() {
               },
               body: JSON.stringify({
                 email: email,
-                firstName: firstName,
-                lastName: lastName,
+                name: {
+                  firstName: firstName,
+                  lastName: lastName,
+                },
                 password: password,
                 key: key,
               }),
