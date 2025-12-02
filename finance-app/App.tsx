@@ -7,6 +7,7 @@ import {
   Alert,
   TextInput,
   Image,
+  TouchableOpacity,
 } from 'react-native';
 import {
   createStaticNavigation,
@@ -16,6 +17,7 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { Button } from '@react-navigation/elements';
 import { useState } from 'react';
 import { useNavigate } from "react-router-dom";
+
 function HomeScreen() {
   const navigation = useNavigation();
 
@@ -125,40 +127,82 @@ function SignUpScreen() {
   const [firstName, onChangeFirstName] = React.useState('');
   const [lastName, onChangeLastName] = React.useState('');
   const [password, onChangePassword] = React.useState('');
+  const [rPassword, onChangeRPassword] = React.useState('');
   const [key, onChangeKey] = React.useState('');
   const [errorMessage, setErrorMessage] = React.useState('')
+  const [showHidePassword, setshowHidePassword] = useState(true);
+  const [showHideRPassword, setshowHideRPassword] = useState(true);
+
+  const togglePassword = () => {
+    setshowHidePassword(!showHidePassword);
+  };
+  const toggleRPassword = () => {
+    setshowHideRPassword(!showHideRPassword);
+  };
+
   return (
     <View style={styles.container}>
       <Image
         style={styles.logoImage}
         source={require('./assets/favicon.png')}
       />
+
       <Text style={styles.menuText1}>Finance App</Text>
+      
       <Text style={styles.menuText2}>Sign Up</Text>
+
       <TextInput
         style={styles.inputField}
         onChangeText={onChangeEmail}
         value={email}
+        keyboardType="email-address"
+        autoCapitalize="none"
+        autoCorrect={false}
         placeholder="Email"
       />
+
       <TextInput
         style={styles.inputField}
         onChangeText={onChangeFirstName}
         value={firstName}
         placeholder="First Name"
       />
+
       <TextInput
         style={styles.inputField}
         onChangeText={onChangeLastName}
         value={lastName}
         placeholder="Last Name"
       />
+      
       <TextInput
         style={styles.inputField}
         onChangeText={onChangePassword}
         value={password}
+        autoCapitalize="none"
         placeholder="Password"
+        spellCheck={false}
+        secureTextEntry={showHidePassword}
       />
+
+      <TouchableOpacity onPress={togglePassword} style={styles.smallButton}>
+        <Text style={styles.smallButtonText}>Toogle Password</Text>
+      </TouchableOpacity>
+      
+      <TextInput
+        style={styles.inputField}
+        onChangeText={onChangeRPassword}
+        value={rPassword}
+        autoCapitalize="none"
+        placeholder="Repeat Password"
+        spellCheck={false}
+        secureTextEntry={showHideRPassword}
+      />
+
+      <TouchableOpacity onPress={toggleRPassword} style={styles.smallButton}>
+        <Text style={styles.smallButtonText}>Toogle Password</Text>
+      </TouchableOpacity>
+
       <TextInput
         style={styles.inputField}
         onChangeText={onChangeKey}
@@ -168,16 +212,19 @@ function SignUpScreen() {
       <Pressable
         style={styles.button}
         onPress={async () => {
-          if (!email || !firstName || !lastName || !password || !key) {
+          setErrorMessage("");
+          if (password != rPassword) {
+            setErrorMessage("The passwords do not match.");
+            return;
+          } else if (!email || !firstName || !lastName || !password || !rPassword || !key) {
             setErrorMessage("Please fill in all fields.");
             return;
-          } 
-          else {
+          } else {
             setErrorMessage("");
           }
 
           try {
-            const response = await fetch("http://192.168.20.74:45631/register", {
+            const response = await fetch("http://192.168.20.74:5000/register", {
               method: "POST",
               headers: {
                 Accept: "application/json",
@@ -192,7 +239,7 @@ function SignUpScreen() {
               }),
             });
 
-            if (!response.ok) {
+            if (response.status != 201) {
               console.log("Server error:", response.status);
               setErrorMessage("Server error: " + response.status);
               return;
@@ -230,14 +277,29 @@ function HomePageScreen() {
       <View style={styles.buttonGrid}>
         <Pressable style={styles.gridButton} onPress={() => Alert.alert('Graph app opened')}>
           <Text style={styles.buttonText}>Graphs -&gt;</Text>
+          <Image
+            style={styles.buttonImage}
+            source={require('./assets/favicon.png')}
+            resizeMode='center'
+          />
         </Pressable>
 
         <Pressable style={styles.gridButton} onPress={() => Alert.alert('Todo app opened')}>
           <Text style={styles.buttonText}>Todo -&gt;</Text>
+          <Image
+            style={styles.buttonImage}
+            source={require('./assets/todo.png')}
+            resizeMode='center'
+          />
         </Pressable>
 
         <Pressable style={styles.gridButton} onPress={() => Alert.alert('Payment app opened')}>
           <Text style={styles.buttonText}>Payment -&gt;</Text>
+          <Image
+            style={styles.buttonImage}
+            source={require('./assets/payment.png')}
+            resizeMode='center'
+          />
         </Pressable>
       </View>
     </View>
@@ -259,6 +321,7 @@ const Navigation = createStaticNavigation(RootStack);
 export default function App() {
   return <Navigation />;
 }
+
 
 
 const styles = StyleSheet.create({
@@ -300,8 +363,11 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
   },
     gridButton: {
+    width: '100%',
+    flexDirection: 'column',
+    justifyContent: 'space-between',
+    alignItems: 'center',
     flex: 1,
-    height: 125,
     backgroundColor: '#ff7300ff',
     borderRadius: 5,
     margin: 10,
@@ -322,4 +388,17 @@ const styles = StyleSheet.create({
     height: 150,
     borderRadius: 5,
   },
+  buttonImage: {
+    borderRadius: 5,
+  },
+  smallButton: {
+    backgroundColor: '#bdbdbdff',
+    borderRadius: 5,
+    padding: 7.5,
+  },
+  smallButtonText: {
+    color: '#000000ff',
+    textAlign: 'center',
+    fontSize: 12.5,
+  }
 });
