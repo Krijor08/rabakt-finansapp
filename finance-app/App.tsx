@@ -52,27 +52,48 @@ function LoginScreen() {
   const navigation = useNavigation();
   const [email, onChangeEmail] = React.useState('');
   const [password, onChangePassword] = React.useState('');
-   const [errorMessage, setErrorMessage] = React.useState('')
+  const [errorMessage, setErrorMessage] = React.useState('')
+  const [showHidePassword, setshowHidePassword] = useState(true);
+
+  const togglePassword = () => {
+    setshowHidePassword(!showHidePassword);
+  };
+
   return (
     <View style={styles.container}>
       <Image
         style={styles.logoImage}
         source={require('./assets/favicon.png')}
       />
+
       <Text style={styles.menuText1}>Finance App</Text>
+
       <Text style={styles.menuText2}>Log In</Text>
+
       <TextInput
         style={styles.inputField}
         onChangeText={onChangeEmail}
         value={email}
+        keyboardType="email-address"
+        autoCapitalize="none"
+        autoCorrect={false}
         placeholder="Email"
       />
+
       <TextInput
         style={styles.inputField}
         onChangeText={onChangePassword}
         value={password}
+        autoCapitalize="none"
         placeholder="Password"
+        spellCheck={false}
+        secureTextEntry={showHidePassword}
       />
+
+      <TouchableOpacity onPress={togglePassword} style={styles.smallButton}>
+        <Text style={styles.smallButtonText}>Toogle Password</Text>
+      </TouchableOpacity>
+
       <Pressable
         style={styles.button}
         onPress={async () => {
@@ -85,7 +106,7 @@ function LoginScreen() {
           }
 
           try {
-            const response = await fetch("http://192.168.20.74:45631/login", {
+            const response = await fetch("http://192.168.20.74:5000/login", {
               method: "POST",
               headers: {
                 Accept: "application/json",
@@ -97,7 +118,7 @@ function LoginScreen() {
               }),
             });
 
-            if (!response.ok) {
+            if (response.status != 201) {
               console.log("Server error:", response.status);
               setErrorMessage("Server error: " + response.status);
               return;
