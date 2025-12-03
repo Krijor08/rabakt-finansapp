@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <title>Login | Node Docker App</title>
-  <link rel="stylesheet" href="/style.css">
+  <link rel="stylesheet" href="../style.css">
 </head>
 <body>
   <div class="container">
@@ -35,7 +35,8 @@
       }
 
       try {
-        const res = await fetch("http://localhost:3000/login", {
+        // API Gateway login route
+        const res = await fetch("/auth/login", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ identifier, password }),
@@ -48,12 +49,13 @@
           return;
         }
 
-        // Store JWT and user info
+        // Save user token + info
         localStorage.setItem("token", data.token);
         localStorage.setItem("user", JSON.stringify(data.user));
 
-        // Redirect to todos page
-        window.location.href = "../home.html";
+        // Redirect to home
+        window.location.href = "../råbakt-helpdesk/public/todo.html";
+
       } catch (err) {
         console.error(err);
         errorMsg.textContent = "Server error. Try again later.";

@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <title>Register | Node Docker App</title>
-  <link rel="stylesheet" href="/style.css">
+  <link rel="stylesheet" href="../style.css">
 </head>
 <body>
   <div class="container">
@@ -39,12 +39,13 @@
       }
 
       try {
-        let url = "http://localhost:3000/register";
+        // API Gateway endpoints
+        let url = "/auth/register";
         let body = { username, email, password };
 
-        // If secret is provided, hit the superadmin route
+        // If secret is provided → superadmin route
         if (secret) {
-          url = "http://localhost:3000/create-superadmin";
+          url = "/auth/create-superadmin";
           body.secret = secret;
         }
 
@@ -63,16 +64,21 @@
 
         alert(`✅ ${secret ? "Superadmin" : "Account"} created!`);
 
-        // Auto-login after registration
+        // Auto-login for normal accounts
         if (!secret) {
           localStorage.setItem("token", data.token || "");
           localStorage.setItem(
             "user",
-            JSON.stringify({ id: data.user.id, username: data.user.username, email: data.user.email })
+            JSON.stringify({
+              id: data.user.id,
+              username: data.user.username,
+              email: data.user.email,
+            })
           );
-          window.location.href = "../home.html";
+
+          window.location.href = "../råbakt-helpdesk/public/todos.html";
         } else {
-          // Superadmin created, redirect to login
+          // Redirect superadmin to login
           window.location.href = "login.html";
         }
 
