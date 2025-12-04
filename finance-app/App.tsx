@@ -124,7 +124,7 @@ function LoginScreen() {
           }
 
           try {
-            const response = await fetch("http://192.168.20.74:5000/login", {
+            const response = await fetch("http://192.168.20.122:5000/login", {
               method: "POST",
               headers: {
                 Accept: "application/json",
@@ -281,7 +281,7 @@ function SignUpScreen() {
           }
 
           try {
-            const response = await fetch("http://192.168.20.74:5000/register", {
+            const response = await fetch("http://192.168.20.122:5000/register", {
               method: "POST",
               headers: {
                 Accept: "application/json",
