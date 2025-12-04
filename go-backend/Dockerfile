@@ -1,6 +1,5 @@
 FROM golang:alpine
 
-
 WORKDIR /app
 
 COPY go.mod ./
@@ -10,6 +9,6 @@ COPY . .
 
 RUN go build -o go-server .
 
-EXPOSE 45631
+EXPOSE 5000
 
 CMD ["./go-server"]
