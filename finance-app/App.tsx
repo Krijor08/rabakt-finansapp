@@ -8,6 +8,7 @@ import {
   TextInput,
   Image,
   TouchableOpacity,
+  ScrollView,
 } from 'react-native';
 import {
   createStaticNavigation,
@@ -18,33 +19,41 @@ import { Button } from '@react-navigation/elements';
 import { useState } from 'react';
 import { useNavigate } from "react-router-dom";
 
+
+  
+
+  
+
+
 function HomeScreen() {
   const navigation = useNavigation();
 
   return (
-    <View style={styles.container}>
-      <Image
-        style={styles.logoImage}
-        source={require('./assets/favicon.png')}
-      />
-      <Text style={styles.menuText1}>Finance App</Text>
-      <Text style={styles.menuText2}>Choose Option:</Text>
-      <Pressable style={styles.button} onPress={() => navigation.navigate('Login')}>
-        <Text style={styles.buttonText}>
-          Go to Login -&gt;
-        </Text>
-      </Pressable>
-      <Pressable style={styles.button} onPress={() => navigation.navigate('SignUp')}>
-        <Text style={styles.buttonText}>
-          Go to Sign Up -&gt;
-        </Text>
-      </Pressable>
-      <Pressable style={styles.button} onPress={() => navigation.navigate('HomePage')}>
-        <Text style={styles.buttonText}>
-          Go to Home Page -&gt;
-        </Text>
-      </Pressable>
-    </View>
+    <ScrollView style={styles.scrolling}>
+      <View style={styles.container}>
+        <Image
+          style={styles.logoImage}
+          source={require('./assets/favicon.png')}
+        />
+        <Text style={styles.menuText1}>Finance App</Text>
+        <Text style={styles.menuText2}>Choose Option:</Text>
+        <Pressable style={styles.button} onPress={() => navigation.navigate('Login')}>
+          <Text style={styles.buttonText}>
+            Go to Login -&gt;
+          </Text>
+        </Pressable>
+        <Pressable style={styles.button} onPress={() => navigation.navigate('SignUp')}>
+          <Text style={styles.buttonText}>
+            Go to Sign Up -&gt;
+          </Text>
+        </Pressable>
+        <Pressable style={styles.button} onPress={() => navigation.navigate('HomePage')}>
+          <Text style={styles.buttonText}>
+            Go to Home Page -&gt;
+          </Text>
+        </Pressable>
+      </View>
+    </ScrollView>
   );
 }
 
@@ -67,61 +76,62 @@ function LoginScreen() {
   }
 
   return (
-    <View style={styles.container}>
-      <Image
-        style={styles.logoImage}
-        source={require('./assets/favicon.png')}
-      />
+    <ScrollView style={styles.scrolling}>
+      <View style={styles.container}>
+        <Image
+          style={styles.logoImage}
+          source={require('./assets/favicon.png')}
+        />
 
-      <Text style={styles.menuText1}>Finance App</Text>
+        <Text style={styles.menuText1}>Finance App</Text>
 
-      <Text style={styles.menuText2}>Log In</Text>
+        <Text style={styles.menuText2}>Log In</Text>
 
-      <TextInput
-        style={[
-          styles.inputField,
-          {
-            borderColor: isValid ? "green" : "red",
-            borderWidth: 2,
-          }
-        ]}
-        onChangeText={(text) => {
-          onChangeEmail(text);
-          setIsValid(validateEmail(text));
-        }}
-        value={email}
-        keyboardType="email-address"
-        autoCapitalize="none"
-        autoCorrect={false}
-        placeholder="Email"
-      />
-      
-      {!isValid && <Text style={{color: "red"}}>Invalid email</Text>}
+        <TextInput
+          style={[
+            styles.inputField,
+            {
+              borderColor: isValid ? "green" : "red",
+              borderWidth: 2,
+            }
+          ]}
+          onChangeText={(text) => {
+            onChangeEmail(text);
+            setIsValid(validateEmail(text));
+          }}
+          value={email}
+          keyboardType="email-address"
+          autoCapitalize="none"
+          autoCorrect={false}
+          placeholder="Email"
+        />
+        
+        {!isValid && <Text style={{color: "red"}}>Invalid email</Text>}
 
-      <TextInput
-        style={styles.inputField}
-        onChangeText={onChangePassword}
-        value={password}
-        autoCapitalize="none"
-        placeholder="Password"
-        spellCheck={false}
-        secureTextEntry={showHidePassword}
-      />
+        <TextInput
+          style={styles.inputField}
+          onChangeText={onChangePassword}
+          value={password}
+          autoCapitalize="none"
+          placeholder="Password"
+          spellCheck={false}
+          secureTextEntry={showHidePassword}
+        />
 
-      <TouchableOpacity onPress={togglePassword} style={styles.smallButton}>
-        <Text style={styles.smallButtonText}>Toggle Password</Text>
-      </TouchableOpacity>
+        <TouchableOpacity onPress={togglePassword} style={styles.smallButton}>
+          <Text style={styles.smallButtonText}>Toggle Password</Text>
+        </TouchableOpacity>
 
-      <Pressable
-        style={styles.button}
-        onPress={async () => {
-          if (!email || !password) {
-            setErrorMessage("Please fill in all fields.");
-            return;
-          } 
-          else {
-            setErrorMessage("");
-          }
+        <Pressable
+          style={styles.button}
+          onPress={async () => {
+            if (!email || !password) {
+              setErrorMessage("Please fill in all fields.");
+              return;
+            } 
+            else {
+              setErrorMessage("");
+            }
 
           try {
             const response = await fetch("http://192.168.20.122:5000/login", {
@@ -136,27 +146,28 @@ function LoginScreen() {
               }),
             });
 
-            if (response.status != 201) {
-              console.log("Server error:", response.status);
-              setErrorMessage("Server error: " + response.status);
-              return;
+              if (response.status != 201) {
+                console.log("Server error:", response.status);
+                setErrorMessage("Server error: " + response.status);
+                return;
+              }
+
+              const data = await response.json();
+              console.log("Server response:", data);
+
+              navigation.navigate("HomePage");
+            } catch (err) {
+              console.error("Network/Fetch error:", err);
+              setErrorMessage("Network/Fetch error.");
             }
+          }}
+        >
+          <Text style={styles.buttonText}>Log In -&gt;</Text>
+        </Pressable>
 
-            const data = await response.json();
-            console.log("Server response:", data);
-
-            navigation.navigate("HomePage");
-          } catch (err) {
-            console.error("Network/Fetch error:", err);
-            setErrorMessage("Network/Fetch error.");
-          }
-        }}
-      >
-        <Text style={styles.buttonText}>Log In -&gt;</Text>
-      </Pressable>
-
-      <Text>{errorMessage}</Text>
-    </View>
+        <Text>{errorMessage}</Text>
+      </View>
+    </ScrollView>
   );
 }
 
@@ -187,98 +198,99 @@ function SignUpScreen() {
   }
 
   return (
-    <View style={styles.container}>
-      <Image
-        style={styles.logoImage}
-        source={require('./assets/favicon.png')}
-      />
+    <ScrollView style={styles.scrolling}>
+      <View style={styles.container}>
+        <Image
+          style={styles.logoImage}
+          source={require('./assets/favicon.png')}
+        />
 
-      <Text style={styles.menuText1}>Finance App</Text>
-      
-      <Text style={styles.menuText2}>Sign Up</Text>
+        <Text style={styles.menuText1}>Finance App</Text>
+        
+        <Text style={styles.menuText2}>Sign Up</Text>
 
-      <TextInput
-        style={[
-          styles.inputField,
-          {
-            borderColor: isValid ? "green" : "red",
-            borderWidth: 2,
-          }
-        ]}
-        onChangeText={(text) => {
-          onChangeEmail(text);
-          setIsValid(validateEmail(text));
-        }}
-        value={email}
-        keyboardType="email-address"
-        autoCapitalize="none"
-        autoCorrect={false}
-        placeholder="Email"
-      />
-      
-      {!isValid && <Text style={{color: "red"}}>Invalid email</Text>}
+        <TextInput
+          style={[
+            styles.inputField,
+            {
+              borderColor: isValid ? "green" : "red",
+              borderWidth: 2,
+            }
+          ]}
+          onChangeText={(text) => {
+            onChangeEmail(text);
+            setIsValid(validateEmail(text));
+          }}
+          value={email}
+          keyboardType="email-address"
+          autoCapitalize="none"
+          autoCorrect={false}
+          placeholder="Email"
+        />
+        
+        {!isValid && <Text style={{color: "red"}}>Invalid email</Text>}
 
-      <TextInput
-        style={styles.inputField}
-        onChangeText={onChangeFirstName}
-        value={firstName}
-        placeholder="First Name"
-      />
+        <TextInput
+          style={styles.inputField}
+          onChangeText={onChangeFirstName}
+          value={firstName}
+          placeholder="First Name"
+        />
 
-      <TextInput
-        style={styles.inputField}
-        onChangeText={onChangeLastName}
-        value={lastName}
-        placeholder="Last Name"
-      />
-      
-      <TextInput
-        style={styles.inputField}
-        onChangeText={onChangePassword}
-        value={password}
-        autoCapitalize="none"
-        placeholder="Password"
-        spellCheck={false}
-        secureTextEntry={showHidePassword}
-      />
+        <TextInput
+          style={styles.inputField}
+          onChangeText={onChangeLastName}
+          value={lastName}
+          placeholder="Last Name"
+        />
+        
+        <TextInput
+          style={styles.inputField}
+          onChangeText={onChangePassword}
+          value={password}
+          autoCapitalize="none"
+          placeholder="Password"
+          spellCheck={false}
+          secureTextEntry={showHidePassword}
+        />
 
-      <TouchableOpacity onPress={togglePassword} style={styles.smallButton}>
-        <Text style={styles.smallButtonText}>Toggle Password</Text>
-      </TouchableOpacity>
-      
-      <TextInput
-        style={styles.inputField}
-        onChangeText={onChangeRPassword}
-        value={rPassword}
-        autoCapitalize="none"
-        placeholder="Repeat Password"
-        spellCheck={false}
-        secureTextEntry={showHideRPassword}
-      />
+        <TouchableOpacity onPress={togglePassword} style={styles.smallButton}>
+          <Text style={styles.smallButtonText}>Toggle Password</Text>
+        </TouchableOpacity>
+        
+        <TextInput
+          style={styles.inputField}
+          onChangeText={onChangeRPassword}
+          value={rPassword}
+          autoCapitalize="none"
+          placeholder="Repeat Password"
+          spellCheck={false}
+          secureTextEntry={showHideRPassword}
+        />
 
-      <TouchableOpacity onPress={toggleRPassword} style={styles.smallButton}>
-        <Text style={styles.smallButtonText}>Toggle Password</Text>
-      </TouchableOpacity>
+        <TouchableOpacity onPress={toggleRPassword} style={styles.smallButton}>
+          <Text style={styles.smallButtonText}>Toggle Password</Text>
+        </TouchableOpacity>
 
-      <TextInput
-        style={styles.inputField}
-        onChangeText={onChangeKey}
-        value={key}
-        placeholder="Key"
-      />
-      <Pressable
-        style={styles.button}
-        onPress={async () => {
-          setErrorMessage("");
-          if (password != rPassword) {
-            setErrorMessage("The passwords do not match.");
-            return;
-          } else if (!email || !firstName || !lastName || !password || !rPassword || !key) {
-            setErrorMessage("Please fill in all fields.");
-            return;
-          } else {
+        <TextInput
+          style={styles.inputField}
+          onChangeText={onChangeKey}
+          value={key}
+          placeholder="Key"
+        />
+        <Pressable
+          style={styles.button}
+          onPress={async () => {
             setErrorMessage("");
-          }
+            if (password != rPassword) {
+              setErrorMessage("The passwords do not match.");
+              return;
+            } else if (!email || !firstName || !lastName || !password || !rPassword || !key) {
+              setErrorMessage("Please fill in all fields.");
+              return;
+            } else {
+              setErrorMessage("");
+            }
 
           try {
             const response = await fetch("http://192.168.20.122:5000/register", {
@@ -298,70 +310,71 @@ function SignUpScreen() {
               }),
             });
 
-            if (response.status != 201) {
-              console.log("Server error:", response.status);
-              setErrorMessage("Server error: " + response.status);
-              return;
+              if (response.status != 201) {
+                console.log("Server error:", response.status);
+                setErrorMessage("Server error: " + response.status);
+                return;
+              }
+
+              const data = await response.json();
+              console.log("Server response:", data);
+
+              navigation.navigate("Login");
+            } catch (err) {
+              console.error("Network/Fetch error:", err);
+              setErrorMessage("Network/Fetch error.");
             }
-
-            const data = await response.json();
-            console.log("Server response:", data);
-
-            navigation.navigate("Login");
-          } catch (err) {
-            console.error("Network/Fetch error:", err);
-            setErrorMessage("Network/Fetch error.");
-          }
-        }}
-      >
-        <Text style={styles.buttonText}>Sign Up -&gt;</Text>
-      </Pressable>
-
-      <Text>{errorMessage}</Text>
-
-    </View>
+          }}
+        >
+          <Text style={styles.buttonText}>Sign Up -&gt;</Text>
+        </Pressable>
+        <Text>{errorMessage}</Text>
+      </View>
+    </ScrollView>
   );
 }
 
 function HomePageScreen() {
     return (
-    <View style={styles.container}>
-      <Image
-        style={styles.logoImage}
-        source={require('./assets/favicon.png')}
-      />
-      <Text style={styles.menuText1}>Finance App</Text>
-      <Text style={styles.menuText2}>Choose your app:</Text>
+    <ScrollView style={styles.scrolling}>
+      <View style={styles.container}>
+        <Image
+          style={styles.logoImage}
+          source={require('./assets/favicon.png')}
+        />
+        <Text style={styles.menuText1}>Finance App</Text>
+        <Text style={styles.menuText2}>Choose your app:</Text>
 
-      <View style={styles.buttonGrid}>
-        <Pressable style={styles.gridButton} onPress={() => Alert.alert('Graph app opened')}>
-          <Text style={styles.buttonText}>Graphs -&gt;</Text>
-          <Image
-            style={styles.buttonImage}
-            source={require('./assets/favicon.png')}
-            resizeMode='center'
-          />
-        </Pressable>
+        <View style={styles.buttonGrid}>
+          <Pressable style={styles.gridButton} onPress={() => Alert.alert('Graph app opened')}>
+            <Text style={styles.buttonText}>Graphs -&gt;</Text>
+            <Image
+              style={styles.buttonImage}
+              source={require('./assets/favicon.png')}
+              resizeMode='center'
+            />
+          </Pressable>
 
-        <Pressable style={styles.gridButton} onPress={() => Alert.alert('Todo app opened')}>
-          <Text style={styles.buttonText}>Todo -&gt;</Text>
-          <Image
-            style={styles.buttonImage}
-            source={require('./assets/todo.png')}
-            resizeMode='center'
-          />
-        </Pressable>
+          <Pressable style={styles.gridButton} onPress={() => Alert.alert('Todo app opened')}>
+            <Text style={styles.buttonText}>Todo -&gt;</Text>
+            <Image
+              style={styles.buttonImage}
+              source={require('./assets/todo.png')}
+              resizeMode='center'
+            />
+          </Pressable>
 
-        <Pressable style={styles.gridButton} onPress={() => Alert.alert('Payment app opened')}>
-          <Text style={styles.buttonText}>Payment -&gt;</Text>
-          <Image
-            style={styles.buttonImage}
-            source={require('./assets/payment.png')}
-            resizeMode='center'
-          />
-        </Pressable>
+          <Pressable style={styles.gridButton} onPress={() => Alert.alert('Payment app opened')}>
+            <Text style={styles.buttonText}>Payment -&gt;</Text>
+            <Image
+              style={styles.buttonImage}
+              source={require('./assets/payment.png')}
+              resizeMode='center'
+            />
+          </Pressable>
+        </View>
       </View>
-    </View>
+    </ScrollView>
   );
 }
 
@@ -384,6 +397,10 @@ export default function App() {
 
 
 const styles = StyleSheet.create({
+  scrolling: {
+    flex: 1,
+    backgroundColor: '#ffffffff',
+  },
   container: {
     alignItems: 'center',
     flex: 1,
