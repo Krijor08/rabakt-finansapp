@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Register | Node Docker App</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="container">
+    <h1>📝 Register</h1>
+
+    <form id="registerForm">
+      <input type="text" id="username" placeholder="Username" required />
+      <input type="email" id="email" placeholder="Email" required />
+      <input type="password" id="password" placeholder="Password" required />
+      <input type="text" id="secret" placeholder="Superadmin Secret (optional)" />
+      <button type="submit">Create Account</button>
+    </form>
+
+    <p id="errorMsg" class="error"></p>
+    <p>Already have an account? <a href="login.html">Login</a></p>
+  </div>
+
+  <script>
+    const form = document.getElementById("registerForm");
+    const errorMsg = document.getElementById("errorMsg");
+
+    form.addEventListener("submit", async (e) => {
+      e.preventDefault();
+
+      const username = document.getElementById("username").value.trim();
+      const email = document.getElementById("email").value.trim();
+      const password = document.getElementById("password").value.trim();
+      const secret = document.getElementById("secret").value.trim();
+
+      if (!username || !email || !password) {
+        errorMsg.textContent = "Please fill in all fields.";
+        return;
+      }
+
+      try {
+        let url = "http://localhost:3000/register";
+        let body = { username, email, password };
+
+        // If secret is provided, hit the superadmin route
+        if (secret) {
+          url = "http://localhost:3000/create-superadmin";
+          body.secret = secret;
+        }
+
+        const res = await fetch(url, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(body),
+        });
+
+        const data = await res.json();
+
+        if (!res.ok) {
+          errorMsg.textContent = data.error || "Registration failed.";
+          return;
+        }
+
+        alert(`✅ ${secret ? "Superadmin" : "Account"} created!`);
+
+        // Auto-login after registration
+        if (!secret) {
+          localStorage.setItem("token", data.token || "");
+          localStorage.setItem(
+            "user",
+            JSON.stringify({ id: data.user.id, username: data.user.username, email: data.user.email })
+          );
+          window.location.href = "todos.html";
+        } else {
+          // Superadmin created, redirect to login
+          window.location.href = "login.html";
+        }
+
+      } catch (err) {
+        console.error(err);
+        errorMsg.textContent = "Server error. Try again later.";
+      }
+    });
+  </script>
+</body>
+</html>
