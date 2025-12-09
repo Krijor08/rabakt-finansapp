@@ -1,8 +1,6 @@
-import { View } from "react-native";
+import { View, Text } from "react-native";
 import { 
   VictoryChart,
-  VictoryLine,
-  VictoryAxis,
   VictoryTheme,
   VictoryBar,
 } from "victory";
@@ -10,6 +8,7 @@ import {
 export default function Chart6() {
   return (
         <View style={{ flex: 1 }}>
+            <Text>Beta Build Average Quality:</Text>
             <VictoryChart
                 theme={VictoryTheme.clean}
                 domainPadding={{ x: 40 }}
@@ -21,7 +20,7 @@ export default function Chart6() {
                     { x: 3, y: 6.75 },
                     { x: 4, y: 5.9 },
                     { x: 5, y: 7.8 },
-                    { x: 6, y: 2 },
+                    { x: 6, y: 7 },
                 ]}
                 />
             </VictoryChart>

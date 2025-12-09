@@ -1,4 +1,4 @@
-import { View } from "react-native";
+import { Text, View } from "react-native";
 import { 
   VictoryChart,
   VictoryTheme,
@@ -41,6 +41,7 @@ const sampleData4 = [
 export default function Chart2() {
   return (
         <View style={{ flex: 1 }}>
+            <Text>Previous Years:</Text>
             <VictoryChart
                 events={[
                     {

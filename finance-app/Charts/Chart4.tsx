@@ -1,4 +1,4 @@
-import { View } from "react-native";
+import { Text, View } from "react-native";
 import { 
   VictoryChart,
   VictoryLine,
@@ -9,6 +9,7 @@ import {
 export default function Chart4() {
   return (
         <View style={{ flex: 1 }}>
+            <Text>Beta Build Consistency:</Text>
             <VictoryChart theme={VictoryTheme.clean}>
                 <VictoryAxis />
                 <VictoryLine

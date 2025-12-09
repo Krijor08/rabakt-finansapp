@@ -383,11 +383,17 @@ function GraphPageScreen() {
   return (
     <ScrollView style={styles.scrolling}>
       <View style={styles.container}>
+        
+        <Text style={styles.graphText}>Sales:</Text>
+
         <View style={styles.grid}>
           <Chart1 />
           <Chart2 />
           <Chart3 />
         </View>
+
+        <Text style={styles.graphText}>Beta Builds:</Text>
+
         <View style={styles.grid}>
           <Chart4 />
           <Chart5 />
@@ -497,5 +503,10 @@ const styles = StyleSheet.create({
     color: '#000000ff',
     textAlign: 'center',
     fontSize: 12.5,
-  }
+  },
+  graphText: {
+    color: '#000000ff',
+    textAlign: 'center',
+    fontSize: 25,
+  },
 });

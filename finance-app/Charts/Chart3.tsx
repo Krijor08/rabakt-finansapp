@@ -1,4 +1,4 @@
-import { View } from "react-native";
+import { Text, View } from "react-native";
 import { 
   VictoryChart,
   VictoryTheme,
@@ -9,6 +9,7 @@ import {
 export default function Chart1() {
   return (
         <View style={{ flex: 1 }}>
+            <Text>Amount Of Customers:</Text>
             <VictoryChart
             polar
             theme={VictoryTheme.clean}
