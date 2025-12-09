@@ -40,7 +40,7 @@ services:
     container_name: go_app
     restart: always
     expose:
-      - "8080"
+      - "5000"
 
   gateway:
     build: ./api_gateway

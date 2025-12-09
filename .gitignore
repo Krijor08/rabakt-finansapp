@@ -17,9 +17,10 @@ package-lock.json
 
 # Environment and secrets
 .env
-secret.env
+.env.local
+*.env
 
-# Build outputs
+# Build outputs  
 dist/
 build/
 coverage/
