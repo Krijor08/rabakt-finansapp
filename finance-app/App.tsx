@@ -15,15 +15,14 @@ import {
   useNavigation,
 } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import { Button } from '@react-navigation/elements';
 import { useState } from 'react';
-import { useNavigate } from "react-router-dom";
 
-
-  
-
-  
-
+import Chart1 from "./Charts/Chart1"
+import Chart2 from "./Charts/Chart2"
+import Chart3 from "./Charts/Chart3"
+import Chart4 from "./Charts/Chart4"
+import Chart5 from "./Charts/Chart5"
+import Chart6 from "./Charts/Chart6"
 
 function HomeScreen() {
   const navigation = useNavigation();
@@ -335,6 +334,8 @@ function SignUpScreen() {
 }
 
 function HomePageScreen() {
+  const navigation = useNavigation();
+
     return (
     <ScrollView style={styles.scrolling}>
       <View style={styles.container}>
@@ -345,8 +346,8 @@ function HomePageScreen() {
         <Text style={styles.menuText1}>Finance App</Text>
         <Text style={styles.menuText2}>Choose your app:</Text>
 
-        <View style={styles.buttonGrid}>
-          <Pressable style={styles.gridButton} onPress={() => Alert.alert('Graph app opened')}>
+        <View style={styles.grid}>
+          <Pressable style={styles.gridButton} onPress={() => navigation.navigate('Graphs')}>
             <Text style={styles.buttonText}>Graphs -&gt;</Text>
             <Image
               style={styles.buttonImage}
@@ -378,13 +379,33 @@ function HomePageScreen() {
   );
 }
 
+function GraphPageScreen() {
+  return (
+    <ScrollView style={styles.scrolling}>
+      <View style={styles.container}>
+        <View style={styles.grid}>
+          <Chart1 />
+          <Chart2 />
+          <Chart3 />
+        </View>
+        <View style={styles.grid}>
+          <Chart4 />
+          <Chart5 />
+          <Chart6 />
+        </View>
+      </View>
+    </ScrollView>
+  )
+}
+
 const RootStack = createNativeStackNavigator({
   initialRouteName: 'Home',
   screens: {
     Home: HomeScreen,
     Login: LoginScreen,
     SignUp: SignUpScreen,
-    HomePage: HomePageScreen
+    HomePage: HomePageScreen,
+    Graphs: GraphPageScreen
   },
 });
 
@@ -432,7 +453,7 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     fontSize: 20,
   },
-  buttonGrid: {
+  grid: {
     width: '100%',
     flexDirection: 'row',
     flexWrap: 'wrap',
