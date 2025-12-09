@@ -16,7 +16,13 @@ import {
 } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { useState } from 'react';
+
 import Chart1 from "./Charts/Chart1"
+import Chart2 from "./Charts/Chart2"
+import Chart3 from "./Charts/Chart3"
+import Chart4 from "./Charts/Chart4"
+import Chart5 from "./Charts/Chart5"
+import Chart6 from "./Charts/Chart6"
 
 function HomeScreen() {
   const navigation = useNavigation();
@@ -340,7 +346,7 @@ function HomePageScreen() {
         <Text style={styles.menuText1}>Finance App</Text>
         <Text style={styles.menuText2}>Choose your app:</Text>
 
-        <View style={styles.buttonGrid}>
+        <View style={styles.grid}>
           <Pressable style={styles.gridButton} onPress={() => navigation.navigate('Graphs')}>
             <Text style={styles.buttonText}>Graphs -&gt;</Text>
             <Image
@@ -377,7 +383,16 @@ function GraphPageScreen() {
   return (
     <ScrollView style={styles.scrolling}>
       <View style={styles.container}>
-        <Chart1 />
+        <View style={styles.grid}>
+          <Chart1 />
+          <Chart2 />
+          <Chart3 />
+        </View>
+        <View style={styles.grid}>
+          <Chart4 />
+          <Chart5 />
+          <Chart6 />
+        </View>
       </View>
     </ScrollView>
   )
@@ -438,7 +453,7 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     fontSize: 20,
   },
-  buttonGrid: {
+  grid: {
     width: '100%',
     flexDirection: 'row',
     flexWrap: 'wrap',
