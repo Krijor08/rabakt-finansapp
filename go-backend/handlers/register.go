@@ -1,9 +1,13 @@
 package handlers
 
 import (
+	"database/sql"
 	"encoding/json"
 	"io"
+	"log"
 	"net/http"
+
+	_ "github.com/go-sql-driver/mysql"
 )
 
 type ApiResponse struct {
@@ -33,6 +37,19 @@ type Name struct {
 }
 
 func Register(w http.ResponseWriter, r *http.Request) {
+	dsn := "root:yourpassword@tcp(127.0.0.1:3306)/mydb?parseTime=true&loc=Local"
+
+	db, err := sql.Open("mysql", dsn)
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer db.Close()
+
+	// Test the connection
+	if err := db.Ping(); err != nil {
+
+	}
+
 	if r.Method != http.MethodPost {
 		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
 		return
