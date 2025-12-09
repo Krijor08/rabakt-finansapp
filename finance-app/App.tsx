@@ -15,15 +15,8 @@ import {
   useNavigation,
 } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import { Button } from '@react-navigation/elements';
 import { useState } from 'react';
-import { useNavigate } from "react-router-dom";
-
-
-  
-
-  
-
+import Chart1 from "./Charts/Chart1"
 
 function HomeScreen() {
   const navigation = useNavigation();
@@ -335,6 +328,8 @@ function SignUpScreen() {
 }
 
 function HomePageScreen() {
+  const navigation = useNavigation();
+
     return (
     <ScrollView style={styles.scrolling}>
       <View style={styles.container}>
@@ -346,7 +341,7 @@ function HomePageScreen() {
         <Text style={styles.menuText2}>Choose your app:</Text>
 
         <View style={styles.buttonGrid}>
-          <Pressable style={styles.gridButton} onPress={() => Alert.alert('Graph app opened')}>
+          <Pressable style={styles.gridButton} onPress={() => navigation.navigate('Graphs')}>
             <Text style={styles.buttonText}>Graphs -&gt;</Text>
             <Image
               style={styles.buttonImage}
@@ -378,13 +373,24 @@ function HomePageScreen() {
   );
 }
 
+function GraphPageScreen() {
+  return (
+    <ScrollView style={styles.scrolling}>
+      <View style={styles.container}>
+        <Chart1 />
+      </View>
+    </ScrollView>
+  )
+}
+
 const RootStack = createNativeStackNavigator({
   initialRouteName: 'Home',
   screens: {
     Home: HomeScreen,
     Login: LoginScreen,
     SignUp: SignUpScreen,
-    HomePage: HomePageScreen
+    HomePage: HomePageScreen,
+    Graphs: GraphPageScreen
   },
 });
 
