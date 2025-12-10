@@ -6,7 +6,6 @@
   <link rel="stylesheet" href="style.css">
 
   <style>
-    /* ---------------- GLOBAL PAGE STYLE ---------------- */
     body {
       font-family: Arial, sans-serif;
       background: #eef1f5;
@@ -28,12 +27,8 @@
       box-shadow: 0 6px 18px rgba(0,0,0,0.12);
     }
 
-    h1 {
-      margin-top: 0;
-      text-align: center;
-    }
+    h1 { text-align: center; }
 
-    /* ---------------- ROLE BADGES ---------------- */
     .badge {
       padding: 3px 8px;
       border-radius: 8px;
@@ -48,7 +43,6 @@
     .role-4 { background: #e53935; }
     .role-5 { background: #8e24aa; }
 
-    /* ---------------- SEARCH + FILTER ---------------- */
     #topControls {
       display: flex;
       gap: 20px;
@@ -57,14 +51,13 @@
       justify-content: center;
     }
 
-    #searchInput, #roleFilter {
+    #searchInput, #roleFilter, #sortMode {
       padding: 8px;
       border: 1px solid #ccc;
       border-radius: 6px;
       width: 250px;
     }
 
-    /* ---------------- TABLE ---------------- */
     table {
       width: 100%;
       border-collapse: collapse;
@@ -76,7 +69,6 @@
       padding: 10px;
       border-bottom: 1px solid #ddd;
       text-align: left;
-      vertical-align: top;
     }
 
     th {
@@ -85,16 +77,16 @@
       top: 0;
       z-index: 3;
       cursor: pointer;
+      user-select: none;
     }
 
-    tr:hover {
-      background: #fafafa;
-    }
+    th:hover { background: #eee; }
+
+    tr:hover { background: #fafafa; }
 
     ul { margin: 0; padding-left: 20px; }
     .completed { text-decoration: line-through; color: gray; }
 
-    /* ---------------- BUTTONS ---------------- */
     button.action {
       margin: 3px 0;
       padding: 5px 10px;
@@ -134,7 +126,7 @@
     <h1>🛠 Admin Panel</h1>
     <p id="adminInfo" style="text-align:center; font-weight:bold;"></p>
 
-    <!-- SEARCH + FILTER -->
+    <!-- SEARCH + FILTER + SORT MODE -->
     <div id="topControls">
       <input id="searchInput" placeholder="Search username or email...">
       <select id="roleFilter">
@@ -145,9 +137,17 @@
         <option value="2">Moderator</option>
         <option value="1">User</option>
       </select>
+
+      <select id="sortMode">
+        <option value="role-desc">Sort by Role (DESC)</option>
+        <option value="role-asc">Sort by Role (ASC)</option>
+        <option value="username-asc">Username A→Z</option>
+        <option value="username-desc">Username Z→A</option>
+        <option value="todos-desc">Most Todos</option>
+        <option value="todos-asc">Fewest Todos</option>
+      </select>
     </div>
 
-    <!-- LEGEND -->
     <p style="text-align:center; font-size:13px;">
       Role colors:
       <span class="badge role-5">Superadmin</span>
@@ -157,11 +157,10 @@
       <span class="badge role-1">User</span>
     </p>
 
-    <!-- USER TABLE -->
     <table>
       <thead>
         <tr>
-          <th data-sort="username">Username ▾</th>
+          <th data-sort="username">Username</th>
           <th data-sort="email">Email</th>
           <th data-sort="role">Role</th>
           <th data-sort="todos">Todos</th>
@@ -181,6 +180,7 @@
   const usersTable = document.getElementById("usersTable");
   const searchInput = document.getElementById("searchInput");
   const roleFilter = document.getElementById("roleFilter");
+  const sortMode = document.getElementById("sortMode");
 
   const ROLES = {
     1: "User",
@@ -191,28 +191,26 @@
   };
 
   let allUsers = [];
-  let currentSort = { column: "username", asc: false };
 
   async function fetchUsersTodos() {
-    try {
-      const res = await fetch("/admin/users-todos", {
-        headers: { Authorization: `Bearer ${token}` }
-      });
+    const res = await fetch("/admin/users-todos", {
+      headers: { Authorization: `Bearer ${token}` }
+    });
 
-      const users = await res.json();
-      allUsers = users;
+    allUsers = await res.json();
 
-      const decoded = JSON.parse(atob(token.split('.')[1]));
-      const myRole = decoded.role;
+    renderUsers();
+    updateAdminHeader();
+  }
 
-      document.getElementById("adminInfo").textContent =
-        `Logged in as: ${decoded.username} (Role: ${ROLES[myRole]})`;
+  function updateAdminHeader() {
+    const decoded = parseJwt(localStorage.getItem("token"));
+    document.getElementById("adminInfo").textContent =
+      `Logged in as: ${decoded.username} (Role: ${ROLES[decoded.role]})`;
+  }
 
-      renderUsers();
-    } catch (err) {
-      console.error(err);
-      alert("Error loading admin panel.");
-    }
+  function parseJwt(token) {
+    return JSON.parse(atob(token.split('.')[1]));
   }
 
   /* ---------------- RENDER ---------------- */
@@ -233,27 +231,31 @@
       filtered = filtered.filter(u => Number(u.role) === Number(role));
     }
 
-    filtered.sort((a, b) => {
-      const col = currentSort.column;
+    switch (sortMode.value) {
+      case "role-desc":
+        filtered.sort((a, b) => b.role - a.role);
+        break;
+      case "role-asc":
+        filtered.sort((a, b) => a.role - b.role);
+        break;
+      case "username-asc":
+        filtered.sort((a, b) => a.username.localeCompare(b.username));
+        break;
+      case "username-desc":
+        filtered.sort((a, b) => b.username.localeCompare(a.username));
+        break;
+      case "todos-desc":
+        filtered.sort((a, b) => b.todos.length - a.todos.length);
+        break;
+      case "todos-asc":
+        filtered.sort((a, b) => a.todos.length - b.todos.length);
+        break;
+    }
 
-      if (col === "todos") {
-        return currentSort.asc
-          ? a.todos.length - b.todos.length
-          : b.todos.length - a.todos.length;
-      }
-
-      if (col === "role") {
-        return currentSort.asc ? a.role - b.role : b.role - a.role;
-      }
-
-      return currentSort.asc
-        ? a[col].localeCompare(b[col])
-        : b[col].localeCompare(a[col]);
-    });
+    const me = parseJwt(localStorage.getItem("token"));
+    const myRole = me.role;
 
     usersTable.innerHTML = "";
-    const decoded = JSON.parse(atob(token.split('.')[1]));
-    const myRole = decoded.role;
 
     filtered.forEach(u => {
       const badge = `<span class="badge role-${u.role}">${ROLES[u.role]}</span>`;
@@ -262,7 +264,8 @@
         : "<em>No todos</em>";
 
       let actions = "<em>Not allowed</em>";
-      if (myRole >= 4 && (myRole > u.role || myRole == 5)) {
+
+      if (myRole >= 4 && (myRole > u.role || myRole === 5)) {
         actions = `
           <button class="action promote"
             onclick="changeRole(${u.id}, ${u.role + 1})"
@@ -288,26 +291,15 @@
     });
   }
 
-  /* ---------------- SORTING ---------------- */
-  document.querySelectorAll("th[data-sort]").forEach(th => {
-    th.addEventListener("click", () => {
-      const col = th.getAttribute("data-sort");
-
-      if (currentSort.column === col) {
-        currentSort.asc = !currentSort.asc;
-      } else {
-        currentSort.column = col;
-        currentSort.asc = false;
-      }
-      renderUsers();
-    });
-  });
-
   searchInput.addEventListener("input", renderUsers);
   roleFilter.addEventListener("change", renderUsers);
+  sortMode.addEventListener("change", renderUsers);
 
   /* ---------------- ACTIONS ---------------- */
+
   async function changeRole(id, newRole) {
+    const me = parseJwt(localStorage.getItem("token"));
+
     if (!confirm("Change user's role?")) return;
 
     const res = await fetch(`/admin/role/${id}`, {
@@ -316,7 +308,25 @@
       body: JSON.stringify({ newRole })
     });
 
-    await res.json();
+    const data = await res.json();
+    if (!res.ok) return alert(data.error);
+
+    alert(data.message);
+
+    /* if you changed your own role -> refresh token */
+    if (id === me.id) {
+      const refreshed = await fetch("/login", {
+        method: "POST",
+        headers: {"Content-Type":"application/json"},
+        body: JSON.stringify({ identifier: me.username, password: prompt("Re-enter your password to refresh token:") })
+      });
+      const loginData = await refreshed.json();
+      if (refreshed.ok) {
+        localStorage.setItem("token", loginData.token);
+        updateAdminHeader();
+      }
+    }
+
     fetchUsersTodos();
   }
 
