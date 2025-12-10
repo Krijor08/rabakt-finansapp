@@ -24,14 +24,13 @@ services:
     container_name: node_app
     restart: always
     environment:
-      PORT: 3001
       JWT_SECRET: your_jwt_secret
       DB_HOST: db
       DB_USER: root
       DB_PASSWORD: pass
       DB_NAME: mydb
-    expose:
-      - "3001"
+    ports:
+      - "3000:3000"
     depends_on:
       - db
 
