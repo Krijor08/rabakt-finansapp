@@ -9,6 +9,7 @@ import {
   Image,
   TouchableOpacity,
   ScrollView,
+  Linking,
 } from 'react-native';
 import {
   createStaticNavigation,
@@ -16,6 +17,7 @@ import {
 } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { useState } from 'react';
+
 
 import Chart1 from "./Charts/Chart1"
 import Chart2 from "./Charts/Chart2"
@@ -333,6 +335,7 @@ function SignUpScreen() {
   );
 }
 
+
 function HomePageScreen() {
   const navigation = useNavigation();
 
@@ -356,7 +359,7 @@ function HomePageScreen() {
             />
           </Pressable>
 
-          <Pressable style={styles.gridButton} onPress={() => Alert.alert('Todo app opened')}>
+          <Pressable style={styles.gridButton} onPress={() => Linking.openURL('http://localhost:3000')}>
             <Text style={styles.buttonText}>Todo -&gt;</Text>
             <Image
               style={styles.buttonImage}

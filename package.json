@@ -1,7 +1,9 @@
 {
   "dependencies": {
     "expo": "^54.0.25",
+    "expo-linking": "~8.0.10",
     "react-native-svg": "^15.15.1",
+    "react-native-webview": "13.15.0",
     "victory": "^37.3.6"
   },
   "devDependencies": {
