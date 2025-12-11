@@ -29,7 +29,7 @@ async function connectWithRetry(retries = 10, delay = 5000) {
     try {
       const pool = mysql.createPool(DB_CONFIG);
       const conn = await pool.getConnection();
-      console.log("✅ Connected to MySQL!");
+      console.log("Connected to MySQL!");
 
       await conn.query(`
         CREATE TABLE IF NOT EXISTS users (
@@ -53,10 +53,10 @@ async function connectWithRetry(retries = 10, delay = 5000) {
       `);
 
       conn.release();
-      console.log("✅ Tables ready");
+      console.log("Tables ready");
       return pool;
     } catch (err) {
-      console.error(`❌ MySQL not ready (attempt ${i}/${retries}): ${err.code}`);
+      console.error(`MySQL not ready (attempt ${i}/${retries}): ${err.code}`);
       if (i === retries) process.exit(1);
       await new Promise((resolve) => setTimeout(resolve, delay));
     }
@@ -98,7 +98,7 @@ const ROLES = {
 (async () => {
   pool = await connectWithRetry();
 
-  app.get("/", (req, res) => res.send("🚀 Node + MySQL App Running"));
+  app.get("/", (req, res) => res.send("Node + MySQL App Running"));
 
   // 🧾 Register
   app.post("/register", async (req, res) => {
@@ -207,6 +207,47 @@ const ROLES = {
     }
   });
 
+  // ✅ UPDATE TODO — FIX FOR 404
+  app.put("/todos/:id", authenticateToken, async (req, res) => {
+    const { id } = req.params;
+    const { title, completed } = req.body;
+
+    try {
+      const [result] = await pool.query(
+        "UPDATE todos SET title = ?, completed = ? WHERE id = ? AND user_id = ?",
+        [title, completed, id, req.user.id]
+      );
+
+      if (result.affectedRows === 0)
+        return res.status(404).json({ error: "Todo not found" });
+
+      res.json({ message: "Todo updated" });
+    } catch (err) {
+      console.error(err);
+      res.status(500).json({ error: "Error updating todo." });
+    }
+  });
+
+  // ❌ DELETE TODO — FIX FOR 404
+  app.delete("/todos/:id", authenticateToken, async (req, res) => {
+    const { id } = req.params;
+
+    try {
+      const [result] = await pool.query(
+        "DELETE FROM todos WHERE id = ? AND user_id = ?",
+        [id, req.user.id]
+      );
+
+      if (result.affectedRows === 0)
+        return res.status(404).json({ error: "Todo not found" });
+
+      res.json({ message: "Todo deleted" });
+    } catch (err) {
+      console.error(err);
+      res.status(500).json({ error: "Error deleting todo." });
+    }
+  });
+
   // 🧑‍💼 Admin panel: users + todos
   app.get("/admin/users-todos", requireRank(4), async (req, res) => {
     try {
@@ -233,7 +274,7 @@ const ROLES = {
     }
   });
 
-  // 🔺 Promote/Demote (Option 1 logic)
+   // 🔺 Promote/Demote (Option 1 logic)
   app.put("/admin/role/:id", requireRank(4), async (req, res) => {
     const { id } = req.params;
     const { newRole } = req.body;
@@ -299,11 +340,8 @@ const ROLES = {
     }
   });
 
+
   app.listen(PORT, () =>
-    console.log(`🚀 Server running on http://localhost:${PORT}`)
+    console.log(`Server running on http://localhost:${PORT}`)
   );
 })();
-
-
-
-mjao
